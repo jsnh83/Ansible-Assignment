@@ -1,0 +1,28 @@
+- name: Install and configure NTP daemon
+  hosts: all
+  become: yes
+  vars:
+    ntp_servers:
+      - 3.asia.ntp.org
+      - 2.asia.ntp.org
+  tasks:
+    - name: Install NTP package
+      apt:
+        name: ntp
+        state: present
+      when: ansible_distribution == "Ubuntu"
+    - name: Configure NTP daemon
+      template:
+        src: ntp.conf.j2
+        dest: /etc/ntp.conf
+        mode: 0644
+      notify: restart ntp
+  handlers:
+    - name: restart ntp
+      service:
+        name: ntp
+        state: restarted
+      tags:
+        - always
+      run_once: true
+

@@ -1,0 +1,12 @@
+- hosts: localhost
+  become: yes
+  vars:
+    account_range: "{{ range(1,16)|list }}"
+  tasks:
+    - name: Create user accounts
+      user:
+        name: "harman{{ item }}"
+        group: "{{ 'three' if item is divisibleby(3) else 'other' }}"
+        createhome: yes
+      with_items: "{{ account_range }}"
+
